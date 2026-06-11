@@ -409,18 +409,21 @@ function setExit(tab,idx,val){
   render();
   saveData();
 }
+function calcExitFromPct(s){
+  // 항상 원화 평균단가 기준으로 exitKRW 계산
+  const isKR=s.market==='KR';
+  const avgKRW=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
+  const exitKRW=avgKRW*(1+s.exitPct/100);
+  // exit은 미국주식이면 달러, 한국이면 원화
+  s.exit=isKR?exitKRW:exitKRW/fxRate;
+}
 function adjustPct(tab,idx,delta){
   const stocks=tab==='personal'?personalStocks:corpStocks;
   const s=stocks[idx];
-  const cur=s.exitPct!==null?s.exitPct:0;
-  s.exitPct=Math.round((cur+delta)*10)/10;
-  // exitPct → exit 자동계산 (평균단가 기준)
-  const isKR=s.market==='KR';
-  const avgBase=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
-  s.exit=isKR?avgBase*(1+s.exitPct/100):avgBase*(1+s.exitPct/100)/fxRate;
-  // 표시 업데이트
+  s.exitPct=Math.round(((s.exitPct||0)+delta)*10)/10;
+  calcExitFromPct(s);
   const el=document.getElementById('exitpct-'+tab+'-'+idx);
-  if(el)el.value=s.exitPct!==null?s.exitPct.toFixed(1):'';
+  if(el)el.value=s.exitPct.toFixed(1);
   render();
   saveData();
 }
@@ -430,9 +433,7 @@ function setPctDirect(tab,idx,val){
   const v=parseFloat(val);
   if(isNaN(v))return;
   s.exitPct=Math.round(v*10)/10;
-  const isKR=s.market==='KR';
-  const avgBase=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
-  s.exit=isKR?avgBase*(1+s.exitPct/100):avgBase*(1+s.exitPct/100)/fxRate;
+  calcExitFromPct(s);
   render();
   saveData();
 }
@@ -571,15 +572,22 @@ function render(){
       <td class="${tPct===null?'neu':tPct>=0?'pos':'neg'}">${tPct===null?'—':pct(tPct)}</td>
       <td class="${pnl===null?'neu':pnl>=0?'pos':'neg'}">${pnl===null?'—':w(pnl)}</td>
       <td>
-        <div style="display:flex;flex-direction:column;gap:3px;align-items:center;min-width:130px">
-          <div style="display:flex;align-items:center;gap:3px">
-            <button onclick="adjustPct('${tabKey}',${idx},-1)" style="width:22px;height:22px;padding:0;font-size:12px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▼</button>
-            <button onclick="adjustPct('${tabKey}',${idx},-0.1)" style="width:22px;height:22px;padding:0;font-size:11px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▾</button>
-            <input id="exitpct-${tabKey}-${idx}" type="number" value="${s.exitPct!==null?s.exitPct.toFixed(1):''}" placeholder="+0.0%" step="0.1" onchange="setPctDirect('${tabKey}',${idx},this.value)" style="width:58px;height:26px;font-size:12px;text-align:center;border-radius:4px;border:1px solid var(--border2);background:var(--bg);color:var(--text)">
-            <button onclick="adjustPct('${tabKey}',${idx},0.1)" style="width:22px;height:22px;padding:0;font-size:11px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▴</button>
-            <button onclick="adjustPct('${tabKey}',${idx},1)" style="width:22px;height:22px;padding:0;font-size:12px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▲</button>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center;min-width:140px">
+          <div style="display:flex;align-items:center;gap:4px">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <button onclick="adjustPct('${tabKey}',${idx},1)" style="width:24px;height:18px;padding:0;font-size:11px;border-radius:3px;line-height:1">▲</button>
+              <button onclick="adjustPct('${tabKey}',${idx},0.1)" style="width:24px;height:18px;padding:0;font-size:10px;border-radius:3px;line-height:1;color:var(--text2)">▴</button>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+              <input id="exitpct-${tabKey}-${idx}" type="number" value="${s.exitPct!==null?s.exitPct.toFixed(1):''}" placeholder="0.0" step="0.1" onchange="setPctDirect('${tabKey}',${idx},this.value)" style="width:60px;height:28px;font-size:13px;font-weight:600;text-align:center;border-radius:4px;border:1px solid var(--border2);background:var(--bg);color:var(--pos)">
+              <span style="font-size:10px;color:var(--text3)">% 목표수익</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <button onclick="adjustPct('${tabKey}',${idx},-0.1)" style="width:24px;height:18px;padding:0;font-size:10px;border-radius:3px;line-height:1;color:var(--text2)">▾</button>
+              <button onclick="adjustPct('${tabKey}',${idx},-1)" style="width:24px;height:18px;padding:0;font-size:11px;border-radius:3px;line-height:1">▼</button>
+            </div>
           </div>
-          <div style="font-size:10px;color:var(--text3)">${exitKRW!==null?(isKR?w(exitKRW/s.qty):'$'+(exitKRW/fxRate/s.qty).toFixed(2)):'목표가 미설정'}</div>
+          <div style="font-size:11px;font-weight:600;color:var(--text2)">${exitKRW!==null?(isKR?w(Math.round(exitKRW/s.qty)):('$'+(exitKRW/fxRate/s.qty).toFixed(2))):'미설정'}</div>
         </div>
       </td>
       <td>${targetCell}</td>`;
