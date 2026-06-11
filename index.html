@@ -237,8 +237,8 @@ const personalStocks=[
   {ticker:'004020',name:'현대제철',      avg:39833,  qty:1264, market:'KR', acct:'토스',         cur:null,prev:null, exit:null},
 ];
 const corpStocks=[
-  {ticker:'CDNS', name:'케이던스 디자인', avg:619.00, qty:82,   market:'US', acct:'한투', cur:null,prev:null, exit:null},
-  {ticker:'SVCO', name:'실바코 그룹',     avg:19.06,  qty:3531, market:'US', acct:'한투', cur:null,prev:null, exit:null},
+  {ticker:'CDNS', name:'케이던스 디자인', avg:619.00, avgKRW:619617, qty:82,   market:'US', acct:'한투', cur:null,prev:null, exit:null},
+  {ticker:'SVCO', name:'실바코 그룹',     avg:19.06,  avgKRW:19057,  qty:3531, market:'US', acct:'한투', cur:null,prev:null, exit:null},
   {ticker:'008770',name:'호텔신라',      avg:55700,  qty:400,  market:'KR', acct:'한투', cur:null,prev:null, exit:null},
   {ticker:'004020',name:'현대제철',      avg:32150,  qty:1704, market:'KR', acct:'한투', cur:null,prev:null, exit:null},
 ];
@@ -428,8 +428,8 @@ function render(){
   document.getElementById('cash-section').innerHTML=`
     <div class="slbl"><i class="ti ti-wallet"></i> 현금 설정 — ${isCorp?'법인 (한투)':'개인 (토스+미래에셋+키움)'}</div>
     <div class="cash-inputs">
-      <div class="cash-input-item"><label>원화 예수금 합계 (원)</label><input type="number" value="${cfg.krw}" oninput="cashCfg['${currentTab}'].krw=parseFloat(this.value)||0;render()"></div>
-      <div class="cash-input-item"><label>달러 예수금 합계 ($)</label><input type="number" value="${cfg.usd}" step="0.01" oninput="cashCfg['${currentTab}'].usd=parseFloat(this.value)||0;render()"></div>
+      <div class="cash-input-item"><label>원화 예수금 합계 (원)</label><input type="number" value="${Math.round(cfg.krw)}" step="1" oninput="cashCfg['${currentTab}'].krw=parseFloat(this.value)||0;render()"></div>
+      <div class="cash-input-item"><label>달러 예수금 합계 ($)</label><input type="number" value="${cfg.usd.toFixed(2)}" step="0.01" oninput="cashCfg['${currentTab}'].usd=parseFloat(this.value)||0;render()"></div>
       <div class="cash-input-item"><label>현금 합계 (원화 환산)</label><input type="text" value="${w(totalCashKRW)}" readonly style="background:var(--bg2);color:var(--pos);font-weight:700"></div>
     </div>
     <div class="ratio-row">
@@ -448,7 +448,7 @@ function render(){
   let totalInvestKRW=0,totalValKRW=0,gainKRW=0,lossKRW=0;
   stocks.forEach(s=>{
     const isKR=s.market==='KR';
-    const avgKRW=isKR?s.avg:s.avg*fxRate;
+    const avgKRW=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
     totalInvestKRW+=avgKRW*s.qty;
     if(s.cur!==null){
       const curKRW=isKR?s.cur:s.cur*fxRate;
@@ -474,7 +474,7 @@ function render(){
   stocks.forEach((s,idx)=>{
     const isKR=s.market==='KR';
     const hasCur=s.cur!==null&&s.cur!==undefined;
-    const avgKRW=isKR?s.avg:s.avg*fxRate;
+    const avgKRW=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
     const curKRW=hasCur?(isKR?s.cur:s.cur*fxRate):null;
     const invest=avgKRW*s.qty;
     const val=curKRW!==null?curKRW*s.qty:null;
@@ -520,7 +520,7 @@ function render(){
     const mktBadge=isKR
       ?`<span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-weight:700">🇰🇷 KR</span>`
       :`<span style="font-size:11px;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;font-weight:700">🇺🇸 US</span>`;
-    const avgFmt=isKR?w(s.avg):`${w(avgKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.avg.toFixed(2)}</span>`;
+    const avgFmt=isKR?w(s.avg):(s.avgKRW!=null?`${w(s.avgKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.avg.toFixed(2)}</span>`:`${w(avgKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.avg.toFixed(2)}</span>`);
     const curFmt=hasCur?(isKR?w(s.cur):`${w(curKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.cur.toFixed(2)}</span>`):'<span style="color:#9ca3af">조회중</span>';
     const dayCell=dayChg===null?`<span style="color:#9ca3af;font-size:11px">조회중</span>`
       :isDrop?`<span class="pill p-drop"><i class="ti ti-trending-down"></i>${pct(dayChg)}</span>`
