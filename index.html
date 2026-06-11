@@ -24,12 +24,9 @@
   button:hover{background:var(--bg2);}
   .card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh);}
   .slbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:5px;}
-
-  /* 탭 */
   .tab-bar{display:flex;gap:0;margin-bottom:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:4px;box-shadow:var(--sh);}
   .tab-btn{flex:1;height:38px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;background:transparent;color:var(--text2);transition:all .2s;}
   .tab-btn.active{background:var(--bg3);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.1);}
-
   .fx-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg2);border-radius:var(--rs);margin-bottom:14px;flex-wrap:wrap;}
   .fx-val{font-weight:700;color:var(--pos);}
   .fx-note{font-size:11px;color:var(--text3);}
@@ -59,23 +56,28 @@
   .s-success .si,.s-success .st{color:#15803d;}
   .st{font-size:13px;font-weight:700;margin-bottom:3px;}
   .sb{font-size:12px;line-height:1.65;color:var(--text2);}
-  .asset-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-  @media(max-width:600px){.asset-grid{grid-template-columns:1fr;}}
-  .arow{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-  .adot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-  .albl{font-size:12px;color:var(--text2);flex:1;}
-  .aval{font-size:13px;font-weight:700;}
-  .ainput{width:90px;height:30px;text-align:right;}
-  .sbar{height:14px;border-radius:7px;overflow:hidden;display:flex;margin:10px 0 6px;background:var(--bg3);}
+  .cash-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh);}
+  .cash-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+  @media(max-width:600px){.cash-inputs{grid-template-columns:1fr 1fr;}}
+  .cash-input-item label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px;}
+  .cash-input-item input{width:100%;height:32px;}
+  .ratio-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+  .ratio-item{display:flex;align-items:center;gap:6px;font-size:12px;}
+  .ratio-item label{color:var(--text2);white-space:nowrap;}
+  .ratio-item input[type=range]{width:80px;height:4px;accent-color:#3b82f6;}
+  .ratio-val{font-weight:700;min-width:28px;}
+  .cash-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  @media(max-width:600px){.cash-breakdown{grid-template-columns:repeat(2,1fr);}}
+  .cb-item{background:var(--bg2);border-radius:var(--rs);padding:10px 12px;}
+  .cb-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+  .cb-lbl{font-size:11px;color:var(--text2);margin-bottom:4px;}
+  .cb-val{font-size:15px;font-weight:700;}
+  .cb-pct{font-size:11px;color:var(--text3);margin-top:2px;}
+  .sbar{height:14px;border-radius:7px;overflow:hidden;display:flex;margin:12px 0 6px;background:var(--bg3);}
   .sseg{height:100%;transition:width .5s ease;}
-  .bleg{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--text2);margin-top:5px;}
+  .bleg{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--text2);}
   .bleg-item{display:flex;align-items:center;gap:4px;}
   .bdot{width:8px;height:8px;border-radius:50%;}
-  .ctag{display:inline-flex;align-items:center;gap:2px;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px;}
-  .tok{background:#f0fdf4;color:#15803d;}.twarn{background:#fef2f2;color:#b91c1c;}.tmid{background:#fffbeb;color:#92400e;}
-  .sinfo{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
-  .sr2{display:flex;justify-content:space-between;align-items:center;font-size:12px;}
-  .sr2 .lbl{color:var(--text2);}.sr2 .val{font-weight:700;}
   .sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
   @media(max-width:600px){.sum-row{grid-template-columns:repeat(2,1fr);}}
   .sum-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;box-shadow:var(--sh);}
@@ -83,7 +85,7 @@
   .sum-val{font-size:20px;font-weight:700;}
   .pos{color:var(--pos);}.neg{color:var(--neg);}.neu{color:var(--text);}
   .twrap{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;box-shadow:var(--sh);overflow-x:auto;}
-  table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px;}
   thead th{background:var(--bg2);padding:9px 12px;text-align:right;font-weight:700;font-size:11px;color:var(--text2);letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap;}
   thead th:first-child{text-align:left;}
   tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}
@@ -111,12 +113,12 @@
   .updated{font-size:11px;color:var(--text3);margin-top:8px;text-align:right;}
   .spinning{animation:spin .8s linear infinite;}
   @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-  .acct-tag{font-size:10px;color:var(--text3);margin-top:2px;}
+  .ctag{display:inline-flex;align-items:center;gap:2px;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:4px;}
+  .tok{background:#f0fdf4;color:#15803d;}.twarn{background:#fef2f2;color:#b91c1c;}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="top-bar">
     <div class="live-row">
       <div class="live-dot"></div>
@@ -130,13 +132,11 @@
     </div>
   </div>
 
-  <!-- 탭 -->
   <div class="tab-bar">
     <button class="tab-btn active" id="tab-personal" onclick="switchTab('personal')">🧑 개인계좌</button>
     <button class="tab-btn" id="tab-corp" onclick="switchTab('corp')">🏢 법인계좌 (개미와나무)</button>
   </div>
 
-  <!-- 환율 -->
   <div class="fx-row">
     <span class="clbl">💱 USD/KRW</span>
     <span class="fx-val" id="fx-val">로딩중...</span>
@@ -154,38 +154,24 @@
       <div>
         <div class="fg-flag">🇺🇸 미국 (CNN)</div>
         <div class="fg-box">
-          <div class="fg-score-wrap">
-            <div class="fg-num" id="us-num">—</div>
-            <div class="fg-lbl" id="us-lbl">조회중</div>
-          </div>
+          <div class="fg-score-wrap"><div class="fg-num" id="us-num">—</div><div class="fg-lbl" id="us-lbl">조회중</div></div>
           <div class="fg-bar-wrap">
             <div class="fg-track"><div class="fg-thumb" id="us-thumb" style="left:50%"></div></div>
             <div class="fg-zones"><span>극단공포</span><span>공포</span><span>중립</span><span>탐욕</span><span>극단탐욕</span></div>
           </div>
         </div>
-        <div class="fg-manual">
-          <label>수동입력</label>
-          <input type="number" id="inp-us-fg" min="0" max="100" placeholder="0~100" oninput="manualFG('us')">
-          <span style="font-size:11px;color:var(--text3)">money.cnn.com</span>
-        </div>
+        <div class="fg-manual"><label>수동입력</label><input type="number" id="inp-us-fg" min="0" max="100" placeholder="0~100" oninput="manualFG('us')"><span style="font-size:11px;color:var(--text3)">money.cnn.com</span></div>
       </div>
       <div>
         <div class="fg-flag">🇰🇷 한국 (코스피)</div>
         <div class="fg-box">
-          <div class="fg-score-wrap">
-            <div class="fg-num" id="kr-num">—</div>
-            <div class="fg-lbl" id="kr-lbl">입력필요</div>
-          </div>
+          <div class="fg-score-wrap"><div class="fg-num" id="kr-num">—</div><div class="fg-lbl" id="kr-lbl">입력필요</div></div>
           <div class="fg-bar-wrap">
             <div class="fg-track"><div class="fg-thumb" id="kr-thumb" style="left:50%"></div></div>
             <div class="fg-zones"><span>극단공포</span><span>공포</span><span>중립</span><span>탐욕</span><span>극단탐욕</span></div>
           </div>
         </div>
-        <div class="fg-manual">
-          <label>수동입력</label>
-          <input type="number" id="inp-kr-fg" min="0" max="100" placeholder="0~100" oninput="manualFG('kr')">
-          <span style="font-size:11px;color:var(--text3)">kospi-fear-greed-index.co.kr</span>
-        </div>
+        <div class="fg-manual"><label>수동입력</label><input type="number" id="inp-kr-fg" min="0" max="100" placeholder="0~100" oninput="manualFG('kr')"><span style="font-size:11px;color:var(--text3)">kospi-fear-greed-index.co.kr</span></div>
       </div>
     </div>
   </div>
@@ -193,8 +179,8 @@
   <div id="us-signal"></div>
   <div id="kr-signal"></div>
 
-  <!-- 자산 설정 (탭별) -->
-  <div id="asset-section"></div>
+  <!-- 현금 설정 -->
+  <div class="cash-card" id="cash-section"></div>
 
   <!-- 요약 -->
   <div class="sum-row" id="sum-row">
@@ -208,13 +194,12 @@
   <div class="twrap">
     <table>
       <thead>
-        <tr><th>종목</th><th>시장</th><th>계좌</th><th>평균단가</th><th>현재가</th><th>당일변동</th><th>수익률</th><th>평가손익</th><th>시그널</th></tr>
+        <tr><th>종목</th><th>시장</th><th>계좌</th><th>수량</th><th>평균단가</th><th>현재가</th><th>당일변동</th><th>수익률</th><th>평가손익</th><th>시그널</th></tr>
       </thead>
       <tbody id="tbl-body"></tbody>
     </table>
   </div>
 
-  <!-- 종목추가 -->
   <div class="add-row">
     <input id="in-tk" placeholder="티커" style="max-width:80px">
     <input id="in-nm" placeholder="종목명" style="max-width:100px">
@@ -230,11 +215,14 @@
   <div class="card">
     <div class="slbl"><i class="ti ti-file-invoice"></i> <span id="tax-title">미국 양도세 예상 (22%)</span></div>
     <div class="tax-grid">
-      <div><div class="tlbl">미실현 이익 (미국주식)</div><div class="tval" id="tx-ur">$0</div></div>
+      <div><div class="tlbl">미실현 이익 합계 (미국주식)</div><div class="tval pos" id="tx-gain">$0</div></div>
+      <div><div class="tlbl">미실현 손실 합계</div><div class="tval neg" id="tx-loss">$0</div></div>
+      <div><div class="tlbl">순 미실현 손익</div><div class="tval" id="tx-net">$0</div></div>
+      <div><div class="tlbl">원화 환산 순손익</div><div class="tval" id="tx-krw">₩0</div></div>
       <div><div class="tlbl">과세표준 (—250만원)</div><div class="tval" id="tx-base">₩0</div></div>
-      <div><div class="tlbl">예상 세액</div><div class="tval neg" id="tx-due">₩0</div></div>
+      <div><div class="tlbl">예상 납부세액 (22%)</div><div class="tval neg" id="tx-due">₩0</div></div>
     </div>
-    <div class="foot" id="tax-foot">* 개인: 미실현 이익 기준 참고용. 실제 신고는 매도(실현) 이익분만 해당. 지방소득세 포함 22% 분류과세.</div>
+    <div class="foot" id="tax-foot">* 미실현 이익 기준 참고용. 실제 신고는 매도(실현) 이익분만 해당. 지방소득세 포함 22% 분류과세.</div>
   </div>
   <div class="updated" id="updated">마지막 갱신: —</div>
 </div>
@@ -243,7 +231,6 @@
 let usFG=null,krFG=null,fxRate=1380;
 let currentTab='personal';
 
-// 개인계좌 종목
 const personalStocks=[
   {ticker:'CDNS',name:'케이던스 디자인',avg:387.70,qty:82,market:'US',acct:'토스',cur:null,prev:null},
   {ticker:'SVCO',name:'실바코 그룹',avg:12.3405,qty:6441,market:'US',acct:'토스+미래에셋',cur:null,prev:null},
@@ -254,7 +241,6 @@ const personalStocks=[
   {ticker:'004020',name:'현대제철',avg:39833,qty:1264,market:'KR',acct:'토스',cur:null,prev:null},
 ];
 
-// 법인계좌 종목
 const corpStocks=[
   {ticker:'CDNS',name:'케이던스 디자인',avg:619.00,qty:82,market:'US',acct:'한투',cur:null,prev:null},
   {ticker:'SVCO',name:'실바코 그룹',avg:19.06,qty:3531,market:'US',acct:'한투',cur:null,prev:null},
@@ -262,10 +248,10 @@ const corpStocks=[
   {ticker:'004020',name:'현대제철',avg:32150,qty:1704,market:'KR',acct:'한투',cur:null,prev:null},
 ];
 
-// 자산설정 (탭별)
-const assetCfg={
-  personal:{emg:500,bot:500,cash:300},
-  corp:{emg:200,bot:200,cash:100},
+// 현금 설정 (원화/달러 직접 입력)
+const cashCfg={
+  personal:{krw:80508206,usd:12855.63,emgPct:10,botPct:10},
+  corp:{krw:90260,usd:218.44,emgPct:10,botPct:10},
 };
 
 const COLORS={emg:'#ef4444',bot:'#f97316',stock:'#3b82f6',cash:'#22c55e'};
@@ -320,31 +306,20 @@ async function fetchFX(){
 async function fetchFGAuto(){
   try{
     const text=await fetchWithProxy('https://production.dataviz.cnn.io/index/fearandgreed/graphdata/previous-close');
-    if(text){
-      const d=JSON.parse(text);
-      if(d.fear_and_greed){usFG=Math.round(d.fear_and_greed.score);return;}
-    }
+    if(text){const d=JSON.parse(text);if(d.fear_and_greed){usFG=Math.round(d.fear_and_greed.score);}}
   }catch(e){}
 }
 
-// 모든 종목 고유 티커 추출해서 한번에 가격 조회
 let priceCache={};
 async function fetchAllPrices(){
-  const allTickers=[...new Set([...personalStocks,...corpStocks].filter(s=>s.market==='US').map(s=>s.ticker))];
-  await Promise.all(allTickers.map(async tk=>{
-    const p=await fetchPrice(tk);
-    if(p)priceCache[tk]=p;
-  }));
-  // 한국 종목
-  const krTickers=[...new Set([...personalStocks,...corpStocks].filter(s=>s.market==='KR').map(s=>s.ticker))];
-  await Promise.all(krTickers.map(async tk=>{
-    const p=await fetchPrice(tk+'.KS');
-    if(p)priceCache[tk]=p;
-  }));
-  // 캐시 적용
+  const allUS=[...new Set([...personalStocks,...corpStocks].filter(s=>s.market==='US').map(s=>s.ticker))];
+  const allKR=[...new Set([...personalStocks,...corpStocks].filter(s=>s.market==='KR').map(s=>s.ticker))];
+  await Promise.all([
+    ...allUS.map(async tk=>{const p=await fetchPrice(tk);if(p)priceCache[tk]=p;}),
+    ...allKR.map(async tk=>{const p=await fetchPrice(tk+'.KS');if(p)priceCache[tk]=p;}),
+  ]);
   [...personalStocks,...corpStocks].forEach(s=>{
-    const key=s.market==='KR'?s.ticker:s.ticker;
-    if(priceCache[key]){s.cur=priceCache[key].cur;s.prev=priceCache[key].prev;}
+    if(priceCache[s.ticker]){s.cur=priceCache[s.ticker].cur;s.prev=priceCache[s.ticker].prev;}
   });
 }
 
@@ -376,7 +351,7 @@ function getZone(v){
   if(v<=79)return'greed';return'extreme_greed';
 }
 function getFGLabel(v){
-  const m={extreme_fear:'극단적 공포',fear:'공포',neutral:'중립',neutral_up:'중립 (50돌파)',greed:'탐욕',extreme_greed:'극단적 탐욕'};
+  const m={extreme_fear:'극단적 공포',fear:'공포',neutral:'중립',neutral_up:'중립(50돌파)',greed:'탐욕',extreme_greed:'극단적 탐욕'};
   return v===null?'입력필요':(m[getZone(v)]||'—');
 }
 function getFGColor(v){
@@ -389,7 +364,7 @@ function getMaster(zone,flag){
   const m={
     extreme_fear:{type:'danger',title:`🚨 ${name} — 극단적 공포 · 1차 매수`,body:'운용가능자금 절반 1차 분할매수. 비상금·바닥매수금은 절대 건드리지 않는다.'},
     fear:{type:'info',title:`⚪ ${name} — 공포 · 현금 대기`,body:'50 돌파 신호 대기. 바닥매수금 재적립 목표.'},
-    neutral:{type:'info',title:`⚪ ${name} — 중립 · 분기점 대기`,body:'50 분기점. 돌파 확인 전까지 홀드 유지.'},
+    neutral:{type:'info',title:`⚪ ${name} — 중립 · 분기점 대기`,body:'50 분기점. 돌파 확인 전까지 홀드.'},
     neutral_up:{type:'success',title:`✅ ${name} — 50 돌파 · 2차 매수`,body:'나머지 운용자금 2차 투입. 주식 비중 80~85% 목표.'},
     greed:{type:'warning',title:`🟡 ${name} — 탐욕 · 익절 준비`,body:'65↑ 소량 → 70↑ 본격 → 75↑ 추가.'},
     extreme_greed:{type:'danger',title:`🔴 ${name} — 극단 탐욕 · 익절 마무리`,body:'80 이상. 익절 마무리 및 현금 최대 확보.'},
@@ -407,23 +382,18 @@ function getSig(zone){
   };
   return m[zone]||{cls:'p-cash',icon:'ti-minus',txt:'—'};
 }
-function fmt(n,kr=false){
+function fmtUSD(n){
   if(n===null)return'—';
-  if(kr){
-    const s=Math.abs(n);
-    if(s>=1e8)return(n>=0?'':'−')+'₩'+(s/1e8).toFixed(1)+'억';
-    if(s>=1e4)return(n>=0?'':'−')+'₩'+(s/1e4).toFixed(0)+'만';
-    return(n>=0?'':'−')+'₩'+s.toLocaleString();
-  }
   const s=Math.abs(n),sg=n>=0?'$':'-$';
   if(s>=1e6)return sg+(s/1e6).toFixed(2)+'M';
   if(s>=1e3)return sg+(s/1e3).toFixed(1)+'K';
   return sg+s.toFixed(2);
 }
 function fmtKRW(n){
-  if(Math.abs(n)>=1e8)return'₩'+(n/1e8).toFixed(1)+'억';
-  if(Math.abs(n)>=1e4)return'₩'+(n/1e4).toFixed(0)+'만';
-  return'₩'+Math.round(n).toLocaleString();
+  const s=Math.abs(n);
+  if(s>=1e8)return(n>=0?'':'-')+'₩'+(s/1e8).toFixed(1)+'억';
+  if(s>=1e4)return(n>=0?'':'-')+'₩'+(s/1e4).toFixed(0)+'만';
+  return(n>=0?'':'-')+'₩'+s.toLocaleString();
 }
 function pct(n,d=2){return(n>=0?'+':'')+n.toFixed(d)+'%';}
 
@@ -435,7 +405,6 @@ function manualFG(market){
   const v=parseInt(document.getElementById(market==='us'?'inp-us-fg':'inp-kr-fg').value);
   if(!isNaN(v)&&v>=0&&v<=100){if(market==='us')usFG=v;else krFG=v;render();}
 }
-
 function renderFGPanel(fg,numId,lblId,thumbId){
   const col=getFGColor(fg);
   document.getElementById(numId).textContent=fg!==null?fg:'—';
@@ -456,83 +425,95 @@ function renderBanner(zone,flag,areaId){
 
 function render(){
   const thr=parseFloat(document.getElementById('inp-thr').value)||8;
-  const cfg=assetCfg[currentTab];
-  const emg=cfg.emg*10000,bot=cfg.bot*10000,cash=cfg.cash*10000;
-  const stocks=getStocks();
+  const cfg=cashCfg[currentTab];
   const isCorp=currentTab==='corp';
+  const stocks=getStocks();
 
   renderFGPanel(usFG,'us-num','us-lbl','us-thumb');
   renderFGPanel(krFG,'kr-num','kr-lbl','kr-thumb');
   renderBanner(getZone(usFG),'us','us-signal');
   renderBanner(getZone(krFG),'kr','kr-signal');
 
-  // 세금 설명 변경
-  if(isCorp){
-    document.getElementById('tax-title').textContent='법인 미국주식 평가손익';
-    document.getElementById('tax-foot').textContent='* 법인은 해외주식 양도세 22% 개인 분류과세 적용 안 됨. 법인세율로 과세 (참고용).';
-  }else{
-    document.getElementById('tax-title').textContent='미국 양도세 예상 (22%)';
-    document.getElementById('tax-foot').textContent='* 개인: 미실현 이익 기준 참고용. 실제 신고는 매도(실현) 이익분만 해당. 지방소득세 포함 22%.';
-  }
+  // 현금 계산
+  const totalCashKRW = cfg.krw + cfg.usd*fxRate;
+  const emgAmt = totalCashKRW * cfg.emgPct/100;
+  const botAmt = totalCashKRW * cfg.botPct/100;
+  const opAmt  = totalCashKRW * (100-cfg.emgPct-cfg.botPct)/100;
 
-  let totalInvest=0,totalVal=0,totalURUS=0;
+  // 현금 설정 섹션
+  document.getElementById('cash-section').innerHTML=`
+    <div class="slbl"><i class="ti ti-wallet"></i> 현금 설정 — ${isCorp?'법인 (한투)':'개인 (토스+미래에셋+키움)'}</div>
+    <div class="cash-inputs">
+      <div class="cash-input-item">
+        <label>원화 예수금 합계 (원)</label>
+        <input type="number" value="${cfg.krw}" oninput="cashCfg['${currentTab}'].krw=parseFloat(this.value)||0;render()">
+      </div>
+      <div class="cash-input-item">
+        <label>달러 예수금 합계 ($)</label>
+        <input type="number" value="${cfg.usd}" step="0.01" oninput="cashCfg['${currentTab}'].usd=parseFloat(this.value)||0;render()">
+      </div>
+      <div class="cash-input-item">
+        <label>현금 합계 (원화 환산)</label>
+        <input type="text" value="${fmtKRW(totalCashKRW)}" readonly style="background:var(--bg2);color:var(--pos);font-weight:700">
+      </div>
+    </div>
+    <div class="ratio-row">
+      <span style="font-size:12px;font-weight:700;color:var(--text2)">비율 조절:</span>
+      <div class="ratio-item">
+        <div class="bdot" style="background:#ef4444;width:10px;height:10px;border-radius:50%"></div>
+        <label>비상금</label>
+        <input type="range" min="0" max="30" value="${cfg.emgPct}" oninput="cashCfg['${currentTab}'].emgPct=parseInt(this.value);render()">
+        <span class="ratio-val" style="color:#ef4444">${cfg.emgPct}%</span>
+      </div>
+      <div class="ratio-item">
+        <div class="bdot" style="background:#f97316;width:10px;height:10px;border-radius:50%"></div>
+        <label>바닥매수금</label>
+        <input type="range" min="0" max="30" value="${cfg.botPct}" oninput="cashCfg['${currentTab}'].botPct=parseInt(this.value);render()">
+        <span class="ratio-val" style="color:#f97316">${cfg.botPct}%</span>
+      </div>
+      <span style="font-size:12px;color:var(--text3)">운용현금 자동: ${(100-cfg.emgPct-cfg.botPct)}%</span>
+    </div>
+    <div class="cash-breakdown">
+      <div class="cb-item"><div class="cb-lbl"><span class="cb-dot" style="background:#ef4444"></span>비상금</div><div class="cb-val">${fmtKRW(emgAmt)}</div><div class="cb-pct">${cfg.emgPct}% <span class="ctag ${cfg.emgPct>=5&&cfg.emgPct<=10?'tok':'twarn'}">${cfg.emgPct>=5&&cfg.emgPct<=10?'✓ 정상':'확인'}</span></div></div>
+      <div class="cb-item"><div class="cb-lbl"><span class="cb-dot" style="background:#f97316"></span>바닥매수금</div><div class="cb-val">${fmtKRW(botAmt)}</div><div class="cb-pct">${cfg.botPct}% <span class="ctag ${cfg.botPct>=5&&cfg.botPct<=10?'tok':'twarn'}">${cfg.botPct>=5&&cfg.botPct<=10?'✓ 정상':'확인'}</span></div></div>
+      <div class="cb-item"><div class="cb-lbl"><span class="cb-dot" style="background:#22c55e"></span>운용현금</div><div class="cb-val">${fmtKRW(opAmt)}</div><div class="cb-pct">${(100-cfg.emgPct-cfg.botPct)}%</div></div>
+      <div class="cb-item"><div class="cb-lbl"><span class="cb-dot" style="background:#6b7280"></span>달러 보유</div><div class="cb-val">$${cfg.usd.toLocaleString()}</div><div class="cb-pct">₩${(cfg.usd*fxRate/10000).toFixed(0)}만</div></div>
+    </div>`;
+
+  // 종목 계산
+  let totalInvestUSD=0,totalValUSD=0;
+  let gainUS=0,lossUS=0;
+
   stocks.forEach(s=>{
-    const invest=s.market==='KR'?s.avg*s.qty/fxRate:s.avg*s.qty;
-    totalInvest+=invest;
+    const isKR=s.market==='KR';
+    const avgUSD=isKR?s.avg/fxRate:s.avg;
+    const invest=avgUSD*s.qty;
+    totalInvestUSD+=invest;
     if(s.cur!==null){
-      const v=s.market==='KR'?s.cur*s.qty/fxRate:s.cur*s.qty;
-      totalVal+=v;
-      if(s.market==='US'&&v>invest)totalURUS+=v-invest;
+      const curUSD=isKR?s.cur/fxRate:s.cur;
+      const val=curUSD*s.qty;
+      totalValUSD+=val;
+      if(!isKR){
+        const pnl=val-invest;
+        if(pnl>0)gainUS+=pnl;
+        else lossUS+=pnl;
+      }
     }
   });
 
-  const stockKRW=totalVal*fxRate;
-  const total=emg+bot+cash+stockKRW;
-  const pE=total>0?emg/total*100:0,pB=total>0?bot/total*100:0;
-  const pS=total>0?stockKRW/total*100:0,pC=total>0?cash/total*100:0;
-  const totC=pE+pB+pC;
-
-  // 자산설정 섹션 (탭별 입력값)
-  document.getElementById('asset-section').innerHTML=`
-    <div class="asset-grid">
-      <div class="card" style="margin-bottom:0">
-        <div class="slbl"><i class="ti ti-settings"></i> 자산 설정 — ${isCorp?'법인':'개인'} (만원)</div>
-        <div class="arow"><div class="adot" style="background:#ef4444"></div><span class="albl">비상금 (권장 5~10%)</span><input class="ainput" type="number" value="${cfg.emg}" oninput="assetCfg['${currentTab}'].emg=parseFloat(this.value)||0;render()"></div>
-        <div class="arow"><div class="adot" style="background:#f97316"></div><span class="albl">바닥매수금 (권장 5~10%)</span><input class="ainput" type="number" value="${cfg.bot}" oninput="assetCfg['${currentTab}'].bot=parseFloat(this.value)||0;render()"></div>
-        <div class="arow"><div class="adot" style="background:#3b82f6"></div><span class="albl">주식 평가금액 (자동)</span><span class="aval">${totalVal>0?'$'+totalVal.toFixed(0):'—'}</span></div>
-        <div class="arow"><div class="adot" style="background:#22c55e"></div><span class="albl">운용현금 (예수금)</span><input class="ainput" type="number" value="${cfg.cash}" oninput="assetCfg['${currentTab}'].cash=parseFloat(this.value)||0;render()"></div>
-      </div>
-      <div class="card" style="margin-bottom:0">
-        <div class="slbl"><i class="ti ti-chart-pie"></i> 자산 배분 현황</div>
-        <div class="sbar">
-          <div class="sseg" style="width:${pE.toFixed(1)}%;background:${COLORS.emg}"></div>
-          <div class="sseg" style="width:${pB.toFixed(1)}%;background:${COLORS.bot}"></div>
-          <div class="sseg" style="width:${pS.toFixed(1)}%;background:${COLORS.stock}"></div>
-          <div class="sseg" style="width:${pC.toFixed(1)}%;background:${COLORS.cash}"></div>
-        </div>
-        <div class="bleg">
-          <div class="bleg-item"><div class="bdot" style="background:${COLORS.emg}"></div>비상금 ${pE.toFixed(1)}%</div>
-          <div class="bleg-item"><div class="bdot" style="background:${COLORS.bot}"></div>바닥매수금 ${pB.toFixed(1)}%</div>
-          <div class="bleg-item"><div class="bdot" style="background:${COLORS.stock}"></div>주식 ${pS.toFixed(1)}%</div>
-          <div class="bleg-item"><div class="bdot" style="background:${COLORS.cash}"></div>운용현금 ${pC.toFixed(1)}%</div>
-        </div>
-        <div class="sinfo">
-          <div class="sr2"><span class="lbl">총 자산 추정</span><span class="val">${fmtKRW(total)}</span></div>
-          <div class="sr2"><span class="lbl">비상금<span class="ctag ${pE>=5&&pE<=10?'tok':'twarn'}">${pE>=5&&pE<=10?'✓ 정상':'! 확인'}</span></span><span class="val">${fmtKRW(emg)}</span></div>
-          <div class="sr2"><span class="lbl">바닥매수금<span class="ctag ${pB>=5&&pB<=10?'tok':'twarn'}">${pB>=5&&pB<=10?'✓ 정상':'! 확인'}</span></span><span class="val">${fmtKRW(bot)}</span></div>
-          <div class="sr2"><span class="lbl">운용가능자금</span><span class="val">${fmtKRW(cash+stockKRW)}</span></div>
-          <div class="sr2"><span class="lbl">현금 비중<span class="ctag ${totC>=10&&totC<=20?'tok':totC<10?'twarn':'tmid'}">${totC.toFixed(1)}%</span></span><span class="val" style="font-size:11px;color:var(--text3)">권장 10~20%</span></div>
-        </div>
-      </div>
-    </div>
-    <div style="margin-bottom:14px"></div>`;
+  // 자산 전체 (현금+주식)
+  const stockKRW=totalValUSD*fxRate;
+  const totalKRW=totalCashKRW+stockKRW;
+  const pCash=totalKRW>0?totalCashKRW/totalKRW*100:0;
+  const pStock=totalKRW>0?stockKRW/totalKRW*100:0;
 
   // 요약
-  const pnlT=totalVal-totalInvest,pctT=totalInvest>0?pnlT/totalInvest*100:0;
+  const pnlT=totalValUSD-totalInvestUSD;
+  const pctT=totalInvestUSD>0?pnlT/totalInvestUSD*100:0;
   document.getElementById('sum-row').innerHTML=`
-    <div class="sum-card"><div class="sum-lbl">총 투자금</div><div class="sum-val neu">${fmt(totalInvest)}</div></div>
-    <div class="sum-card"><div class="sum-lbl">총 평가금액</div><div class="sum-val neu">${fmt(totalVal)}</div></div>
-    <div class="sum-card"><div class="sum-lbl">총 손익</div><div class="sum-val ${pnlT>=0?'pos':'neg'}">${fmt(pnlT)}</div></div>
+    <div class="sum-card"><div class="sum-lbl">총 투자금</div><div class="sum-val neu">${fmtUSD(totalInvestUSD)}</div></div>
+    <div class="sum-card"><div class="sum-lbl">총 평가금액</div><div class="sum-val neu">${fmtUSD(totalValUSD)}</div></div>
+    <div class="sum-card"><div class="sum-lbl">주식 손익</div><div class="sum-val ${pnlT>=0?'pos':'neg'}">${fmtUSD(pnlT)}</div></div>
     <div class="sum-card"><div class="sum-lbl">수익률</div><div class="sum-val ${pctT>=0?'pos':'neg'}">${pct(pctT)}</div></div>`;
 
   // 테이블
@@ -543,10 +524,11 @@ function render(){
     const hasCur=s.cur!==null&&s.cur!==undefined;
     const avgUSD=isKR?s.avg/fxRate:s.avg;
     const curUSD=hasCur?(isKR?s.cur/fxRate:s.cur):null;
-    const invest=avgUSD*s.qty,val=curUSD!==null?curUSD*s.qty:null;
+    const invest=avgUSD*s.qty;
+    const val=curUSD!==null?curUSD*s.qty:null;
     const pnl=val!==null?val-invest:null;
     const tPct=curUSD!==null?(curUSD-avgUSD)/avgUSD*100:null;
-    const dayChg=(hasCur&&s.prev)?(isKR?(s.cur-s.prev)/s.prev*100:(s.cur-s.prev)/s.prev*100):null;
+    const dayChg=(hasCur&&s.prev)?(s.cur-s.prev)/s.prev*100:null;
     const isDrop=dayChg!==null&&dayChg<=-thr;
     const fg=isKR?krFG:usFG;
     const sig=getZone(fg)?getSig(getZone(fg)):null;
@@ -564,21 +546,37 @@ function render(){
     tr.innerHTML=`
       <td><div class="tk">${s.ticker}</div><div class="tn">${s.name}</div></td>
       <td>${mktBadge}</td>
-      <td><div style="font-size:12px">${s.acct}</div></td>
+      <td style="font-size:12px;color:var(--text2)">${s.acct}</td>
+      <td>${s.qty.toLocaleString()}주</td>
       <td>${avgFmt}</td>
       <td>${curFmt}</td>
       <td>${dayCell}</td>
       <td class="${tPct===null?'neu':tPct>=0?'pos':'neg'}">${tPct===null?'—':pct(tPct)}</td>
-      <td class="${pnl===null?'neu':pnl>=0?'pos':'neg'}">${pnl===null?'—':fmt(pnl)}</td>
+      <td class="${pnl===null?'neu':pnl>=0?'pos':'neg'}">${pnl===null?'—':fmtUSD(pnl)}</td>
       <td>${sigCell}</td>`;
     body.appendChild(tr);
   });
 
   // 세금
-  const taxBase=Math.max(0,totalURUS*fxRate-2500000);
-  document.getElementById('tx-ur').textContent='$'+totalURUS.toFixed(0);
+  const netUS=gainUS+lossUS;
+  const netKRW=netUS*fxRate;
+  const taxBase=Math.max(0,netKRW-2500000);
+  const taxDue=isCorp?netKRW*0.22:taxBase*0.22;
+  document.getElementById('tx-gain').textContent=fmtUSD(gainUS);
+  document.getElementById('tx-loss').textContent=fmtUSD(lossUS);
+  document.getElementById('tx-net').textContent=fmtUSD(netUS);
+  document.getElementById('tx-net').className=`tval ${netUS>=0?'pos':'neg'}`;
+  document.getElementById('tx-krw').textContent=fmtKRW(netKRW);
   document.getElementById('tx-base').textContent=fmtKRW(taxBase);
-  document.getElementById('tx-due').textContent=fmtKRW(isCorp?totalURUS*fxRate*0.22:taxBase*0.22);
+  document.getElementById('tx-due').textContent=fmtKRW(Math.max(0,taxDue));
+
+  if(isCorp){
+    document.getElementById('tax-title').textContent='법인 미국주식 평가손익';
+    document.getElementById('tax-foot').textContent='* 법인은 개인 22% 분류과세 미적용. 법인세율로 과세 (참고용).';
+  }else{
+    document.getElementById('tax-title').textContent='미국 양도세 예상 (22%)';
+    document.getElementById('tax-foot').textContent='* 미실현 이익 기준 참고용. 실제 신고는 매도(실현) 이익분만 해당. 지방소득세 포함 22% 분류과세.';
+  }
 }
 
 function addStock(){
