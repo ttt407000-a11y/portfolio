@@ -38,10 +38,9 @@
   .fg-manual label{font-size:11px;color:var(--text2);}
   .fg-manual input{width:70px;height:28px;text-align:center;}
   .fg-flag{font-size:13px;font-weight:700;margin-bottom:8px;}
-  .fx-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border-radius:var(--rs);margin-bottom:14px;flex-wrap:wrap;}
-  .fx-item{display:flex;align-items:center;gap:6px;font-size:13px;}
+  .fx-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg2);border-radius:var(--rs);margin-bottom:14px;flex-wrap:wrap;}
   .fx-val{font-weight:700;color:var(--pos);}
-  .fx-auto{font-size:11px;color:var(--text3);}
+  .fx-note{font-size:11px;color:var(--text3);}
   .sbanner{padding:11px 14px;border-radius:var(--rs);margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;}
   .s-danger{background:#fef2f2;border:1px solid #fca5a5;}
   .s-warning{background:#fffbeb;border:1px solid #fcd34d;}
@@ -106,13 +105,10 @@
   .updated{font-size:11px;color:var(--text3);margin-top:8px;text-align:right;}
   .spinning{animation:spin .8s linear infinite;}
   @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-  .status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px;}
-  .dot-ok{background:#22c55e;}.dot-err{background:#ef4444;}.dot-load{background:#f59e0b;animation:pulse 1s infinite;}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="top-bar">
     <div class="live-row">
       <div class="live-dot"></div>
@@ -126,20 +122,16 @@
     </div>
   </div>
 
-  <!-- 환율 자동 표시 -->
   <div class="fx-row">
-    <div class="fx-item">
-      <span class="clbl">💱 USD/KRW</span>
-      <span class="fx-val" id="fx-val">로딩중...</span>
-      <span class="fx-auto" id="fx-status"></span>
-    </div>
-    <div class="fx-item" style="margin-left:auto">
+    <span class="clbl">💱 USD/KRW</span>
+    <span class="fx-val" id="fx-val">로딩중...</span>
+    <span class="fx-note" id="fx-note"></span>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
       <span class="clbl">수동입력</span>
-      <input class="ci" id="inp-fx" type="number" placeholder="1380" oninput="manualFX()" style="width:70px">
-    </div>
+      <input class="ci" id="inp-fx" type="number" placeholder="1380" oninput="manualFX()" style="width:72px">
+    </span>
   </div>
 
-  <!-- F&G -->
   <div class="card">
     <div class="slbl"><i class="ti ti-mood-nervous"></i> Fear &amp; Greed Index</div>
     <div class="fg-grid">
@@ -185,7 +177,6 @@
   <div id="us-signal"></div>
   <div id="kr-signal"></div>
 
-  <!-- 자산 -->
   <div class="asset-grid">
     <div class="card" style="margin-bottom:0">
       <div class="slbl"><i class="ti ti-settings"></i> 자산 설정 (만원)</div>
@@ -213,10 +204,7 @@
   <div class="twrap">
     <table>
       <thead>
-        <tr>
-          <th>종목</th><th>시장</th><th>평균단가</th><th>현재가</th>
-          <th>당일변동</th><th>수익률</th><th>평가손익</th><th>시그널</th>
-        </tr>
+        <tr><th>종목</th><th>시장</th><th>평균단가</th><th>현재가</th><th>당일변동</th><th>수익률</th><th>평가손익</th><th>시그널</th></tr>
       </thead>
       <tbody id="tbl-body"></tbody>
     </table>
@@ -245,8 +233,7 @@
 </div>
 
 <script>
-const FINNHUB_KEY = 'd8l7s8hr01qut1f9l4dg';
-let usFG=null, krFG=null, fxRate=1380;
+let usFG=null,krFG=null,fxRate=1380;
 let stocks=[
   {ticker:'DELL',name:'Dell Technologies',avg:120,qty:20,market:'US',cur:null,prev:null},
   {ticker:'NVDA',name:'Nvidia',avg:115,qty:30,market:'US',cur:null,prev:null},
@@ -256,14 +243,94 @@ let stocks=[
 ];
 const COLORS={emg:'#ef4444',bot:'#f97316',stock:'#3b82f6',cash:'#22c55e'};
 
+// 여러 프록시 순서대로 시도
+const PROXIES=[
+  url=>`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+  url=>`https://corsproxy.io/?${encodeURIComponent(url)}`,
+  url=>`https://cors-anywhere.herokuapp.com/${url}`,
+];
+
+async function fetchWithProxy(url){
+  for(const proxy of PROXIES){
+    try{
+      const r=await fetch(proxy(url),{signal:AbortSignal.timeout(8000)});
+      if(!r.ok)continue;
+      const text=await r.text();
+      // allorigins returns {contents:...}
+      try{
+        const j=JSON.parse(text);
+        if(j.contents)return j.contents;
+        return text;
+      }catch{return text;}
+    }catch(e){continue;}
+  }
+  return null;
+}
+
+async function fetchPrice(ticker){
+  try{
+    const url=`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=2d`;
+    const text=await fetchWithProxy(url);
+    if(!text)return null;
+    const d=JSON.parse(text);
+    const meta=d.chart.result[0].meta;
+    return{cur:meta.regularMarketPrice,prev:meta.previousClose||meta.chartPreviousClose};
+  }catch(e){return null;}
+}
+
+async function fetchFX(){
+  try{
+    const r=await fetch('https://open.er-api.com/v6/latest/USD',{signal:AbortSignal.timeout(6000)});
+    const d=await r.json();
+    if(d.rates&&d.rates.KRW){
+      fxRate=Math.round(d.rates.KRW);
+      document.getElementById('fx-val').textContent='₩'+fxRate.toLocaleString();
+      document.getElementById('fx-note').textContent='(자동)';
+      document.getElementById('fx-note').style.color='#22c55e';
+      return true;
+    }
+  }catch(e){}
+  // 폴백2
+  try{
+    const text=await fetchWithProxy('https://query1.finance.yahoo.com/v8/finance/chart/KRW=X?interval=1d&range=1d');
+    if(text){
+      const d=JSON.parse(text);
+      const p=d.chart.result[0].meta.regularMarketPrice;
+      if(p>100){
+        fxRate=Math.round(p);
+        document.getElementById('fx-val').textContent='₩'+fxRate.toLocaleString();
+        document.getElementById('fx-note').textContent='(자동)';
+        document.getElementById('fx-note').style.color='#22c55e';
+        return true;
+      }
+    }
+  }catch(e){}
+  document.getElementById('fx-val').textContent='₩'+fxRate.toLocaleString();
+  document.getElementById('fx-note').textContent='(수동입력 필요)';
+  document.getElementById('fx-note').style.color='#f59e0b';
+  return false;
+}
+
+async function fetchFG(){
+  try{
+    const text=await fetchWithProxy('https://production.dataviz.cnn.io/index/fearandgreed/graphdata/previous-close');
+    if(text){
+      const d=JSON.parse(text);
+      if(d.fear_and_greed){
+        usFG=Math.round(d.fear_and_greed.score);
+        document.getElementById('inp-us-fg').value='';
+        return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+
 function getZone(v){
   if(v===null)return null;
-  if(v<=20)return'extreme_fear';
-  if(v<=49)return'fear';
-  if(v<=50)return'neutral';
-  if(v<=64)return'neutral_up';
-  if(v<=79)return'greed';
-  return'extreme_greed';
+  if(v<=20)return'extreme_fear';if(v<=49)return'fear';
+  if(v<=50)return'neutral';if(v<=64)return'neutral_up';
+  if(v<=79)return'greed';return'extreme_greed';
 }
 function getFGLabel(v){
   const m={extreme_fear:'극단적 공포',fear:'공포',neutral:'중립',neutral_up:'중립 (50돌파)',greed:'탐욕',extreme_greed:'극단적 탐욕'};
@@ -271,16 +338,13 @@ function getFGLabel(v){
 }
 function getFGColor(v){
   if(v===null)return'#9ca3af';
-  if(v<=20)return'#ef4444';
-  if(v<=49)return'#f97316';
-  if(v<=64)return'#eab308';
-  if(v<=79)return'#84cc16';
-  return'#16a34a';
+  if(v<=20)return'#ef4444';if(v<=49)return'#f97316';
+  if(v<=64)return'#eab308';if(v<=79)return'#84cc16';return'#16a34a';
 }
 function getMaster(zone,flag){
   const name=flag==='kr'?'🇰🇷 한국':'🇺🇸 미국';
   const m={
-    extreme_fear:{type:'danger',title:`🚨 ${name} — 극단적 공포 · 1차 매수 구간`,body:'운용가능자금 절반으로 1차 분할매수 시작. 비상금·바닥매수금은 절대 건드리지 않는다.'},
+    extreme_fear:{type:'danger',title:`🚨 ${name} — 극단적 공포 · 1차 매수 구간`,body:'운용가능자금 절반으로 1차 분할매수. 비상금·바닥매수금은 절대 건드리지 않는다.'},
     fear:{type:'info',title:`⚪ ${name} — 공포 · 현금 대기`,body:'50 돌파 신호 대기. 바닥매수금 재적립 목표.'},
     neutral:{type:'info',title:`⚪ ${name} — 중립 · 분기점 대기`,body:'50 분기점. 돌파 확인 전까지 홀드 유지.'},
     neutral_up:{type:'success',title:`✅ ${name} — 50 돌파 · 2차 매수`,body:'나머지 운용자금 2차 투입. 주식 비중 80~85% 목표.'},
@@ -300,7 +364,6 @@ function getSig(zone){
   };
   return m[zone]||{cls:'p-cash',icon:'ti-minus',txt:'—'};
 }
-
 function fmt(n){
   if(n===null)return'—';
   const s=Math.abs(n),sg=n>=0?'$':'-$';
@@ -317,63 +380,11 @@ function pct(n,d=2){return(n>=0?'+':'')+n.toFixed(d)+'%';}
 
 function manualFX(){
   const v=parseFloat(document.getElementById('inp-fx').value);
-  if(!isNaN(v)&&v>0){fxRate=v;document.getElementById('fx-val').textContent='₩'+v.toLocaleString();document.getElementById('fx-status').textContent='(수동)';render();}
+  if(!isNaN(v)&&v>100){fxRate=v;document.getElementById('fx-val').textContent='₩'+v.toLocaleString();document.getElementById('fx-note').textContent='(수동)';render();}
 }
 function manualFG(market){
   const v=parseInt(document.getElementById(market==='us'?'inp-us-fg':'inp-kr-fg').value);
   if(!isNaN(v)&&v>=0&&v<=100){if(market==='us')usFG=v;else krFG=v;render();}
-}
-
-// Finnhub 주식 가격
-async function fetchFinnhub(ticker){
-  try{
-    const r=await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_KEY}`);
-    const d=await r.json();
-    if(d.c&&d.c>0)return{cur:d.c,prev:d.pc};
-    return null;
-  }catch(e){return null;}
-}
-
-// 환율 자동
-async function fetchFX(){
-  try{
-    const r=await fetch(`https://finnhub.io/api/v1/forex/rates?base=USD&token=${FINNHUB_KEY}`);
-    const d=await r.json();
-    if(d.quote&&d.quote.KRW){
-      fxRate=Math.round(d.quote.KRW);
-      document.getElementById('fx-val').textContent='₩'+fxRate.toLocaleString();
-      document.getElementById('fx-status').textContent='(자동)';
-      document.getElementById('fx-status').style.color='#22c55e';
-      return true;
-    }
-  }catch(e){}
-  // 폴백: exchangerate-api
-  try{
-    const r=await fetch('https://open.er-api.com/v6/latest/USD');
-    const d=await r.json();
-    if(d.rates&&d.rates.KRW){
-      fxRate=Math.round(d.rates.KRW);
-      document.getElementById('fx-val').textContent='₩'+fxRate.toLocaleString();
-      document.getElementById('fx-status').textContent='(자동)';
-      document.getElementById('fx-status').style.color='#22c55e';
-      return true;
-    }
-  }catch(e){}
-  document.getElementById('fx-val').textContent='₩'+fxRate.toLocaleString();
-  document.getElementById('fx-status').textContent='(수동입력 필요)';
-  document.getElementById('fx-status').style.color='#f59e0b';
-  return false;
-}
-
-// F&G 자동
-async function fetchFG(){
-  try{
-    const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent('https://production.dataviz.cnn.io/index/fearandgreed/graphdata/previous-close'));
-    const j=await r.json();const d=JSON.parse(j.contents);
-    usFG=Math.round(d.fear_and_greed.score);
-    document.getElementById('inp-us-fg').value='';
-    return true;
-  }catch(e){return false;}
 }
 
 let busy=false;
@@ -386,9 +397,9 @@ async function fetchAll(){
   await Promise.all([
     fetchFX(),
     fetchFG(),
-    ...stocks.map(async(s,i)=>{
+    ...stocks.map(async s=>{
       if(s.market==='US'){
-        const p=await fetchFinnhub(s.ticker);
+        const p=await fetchPrice(s.ticker);
         if(p){s.cur=p.cur;s.prev=p.prev;}
       }
     })
@@ -468,7 +479,6 @@ function render(){
   const body=document.getElementById('tbl-body');
   body.innerHTML='';
   let tI=0,tV=0;
-
   stocks.forEach(s=>{
     const hasCur=s.cur!==null&&s.cur!==undefined;
     const invest=s.avg*s.qty,val=hasCur?s.cur*s.qty:null;
