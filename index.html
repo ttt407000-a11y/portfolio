@@ -228,19 +228,19 @@ let countdownTimer=null;
 let autoTimer=null;
 
 const personalStocks=[
-  {ticker:'CDNS', name:'케이던스 디자인', avg:387.70, qty:82,   market:'US', acct:'토스',         cur:null,prev:null, exit:null},
-  {ticker:'SVCO', name:'실바코 그룹',     avg:12.3405,qty:6441, market:'US', acct:'토스+미래에셋', cur:null,prev:null, exit:null},
-  {ticker:'GCTS', name:'GCT 세미컨덕터', avg:2.94,   qty:2350, market:'US', acct:'토스',         cur:null,prev:null, exit:null},
-  {ticker:'NASA', name:'TEMA SPACE ETF', avg:36.50,  qty:280,  market:'US', acct:'미래에셋',      cur:null,prev:null, exit:null},
-  {ticker:'000660',name:'SK하이닉스',    avg:2010000,qty:18,   market:'KR', acct:'토스+키움',     cur:null,prev:null, exit:null},
-  {ticker:'008770',name:'호텔신라',      avg:55200,  qty:71,   market:'KR', acct:'토스',         cur:null,prev:null, exit:null},
-  {ticker:'004020',name:'현대제철',      avg:39833,  qty:1264, market:'KR', acct:'토스',         cur:null,prev:null, exit:null},
+  {ticker:'CDNS', name:'케이던스 디자인', avg:387.70, qty:82,   market:'US', acct:'토스',         cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'SVCO', name:'실바코 그룹',     avg:12.3405,qty:6441, market:'US', acct:'토스+미래에셋', cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'GCTS', name:'GCT 세미컨덕터', avg:2.94,   qty:2350, market:'US', acct:'토스',         cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'NASA', name:'TEMA SPACE ETF', avg:36.50,  qty:280,  market:'US', acct:'미래에셋',      cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'000660',name:'SK하이닉스',    avg:2010000,qty:18,   market:'KR', acct:'토스+키움',     cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'008770',name:'호텔신라',      avg:55200,  qty:71,   market:'KR', acct:'토스',         cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'004020',name:'현대제철',      avg:39833,  qty:1264, market:'KR', acct:'토스',         cur:null,prev:null, exit:null, exitPct:null},
 ];
 const corpStocks=[
-  {ticker:'CDNS', name:'케이던스 디자인', avg:619.00, avgKRW:619617, qty:82,   market:'US', acct:'한투', cur:null,prev:null, exit:null},
-  {ticker:'SVCO', name:'실바코 그룹',     avg:19.06,  avgKRW:19057,  qty:3531, market:'US', acct:'한투', cur:null,prev:null, exit:null},
-  {ticker:'008770',name:'호텔신라',      avg:55700,  qty:400,  market:'KR', acct:'한투', cur:null,prev:null, exit:null},
-  {ticker:'004020',name:'현대제철',      avg:32150,  qty:1704, market:'KR', acct:'한투', cur:null,prev:null, exit:null},
+  {ticker:'CDNS', name:'케이던스 디자인', avg:619.00, avgKRW:619617, qty:82,   market:'US', acct:'한투', cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'SVCO', name:'실바코 그룹',     avg:19.06,  avgKRW:19057,  qty:3531, market:'US', acct:'한투', cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'008770',name:'호텔신라',      avg:55700,  qty:400,  market:'KR', acct:'한투', cur:null,prev:null, exit:null, exitPct:null},
+  {ticker:'004020',name:'현대제철',      avg:32150,  qty:1704, market:'KR', acct:'한투', cur:null,prev:null, exit:null, exitPct:null},
 ];
 const cashCfg={
   personal:{krw:80508206,usd:12855.63,emgPct:10,botPct:10},
@@ -409,6 +409,33 @@ function setExit(tab,idx,val){
   render();
   saveData();
 }
+function adjustPct(tab,idx,delta){
+  const stocks=tab==='personal'?personalStocks:corpStocks;
+  const s=stocks[idx];
+  const cur=s.exitPct!==null?s.exitPct:0;
+  s.exitPct=Math.round((cur+delta)*10)/10;
+  // exitPct → exit 자동계산 (평균단가 기준)
+  const isKR=s.market==='KR';
+  const avgBase=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
+  s.exit=isKR?avgBase*(1+s.exitPct/100):avgBase*(1+s.exitPct/100)/fxRate;
+  // 표시 업데이트
+  const el=document.getElementById('exitpct-'+tab+'-'+idx);
+  if(el)el.value=s.exitPct!==null?s.exitPct.toFixed(1):'';
+  render();
+  saveData();
+}
+function setPctDirect(tab,idx,val){
+  const stocks=tab==='personal'?personalStocks:corpStocks;
+  const s=stocks[idx];
+  const v=parseFloat(val);
+  if(isNaN(v))return;
+  s.exitPct=Math.round(v*10)/10;
+  const isKR=s.market==='KR';
+  const avgBase=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
+  s.exit=isKR?avgBase*(1+s.exitPct/100):avgBase*(1+s.exitPct/100)/fxRate;
+  render();
+  saveData();
+}
 
 function render(){
   const thr=parseFloat(document.getElementById('inp-thr').value)||8;
@@ -521,7 +548,7 @@ function render(){
     const mktBadge=isKR
       ?`<span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-weight:700">🇰🇷 KR</span>`
       :`<span style="font-size:11px;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;font-weight:700">🇺🇸 US</span>`;
-    const avgFmt=isKR?w(s.avg):(s.avgKRW!=null?`${w(s.avgKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.avg.toFixed(2)}</span>`:`${w(avgKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.avg.toFixed(2)}</span>`);
+    const avgFmt=isKR?w(s.avg):(s.avgKRW!=null?w(s.avgKRW):`${w(avgKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.avg.toFixed(2)}</span>`);
     const curFmt=hasCur?(isKR?w(s.cur):`${w(curKRW)}<br><span style="font-size:10px;color:var(--text3)">$${s.cur.toFixed(2)}</span>`):'<span style="color:#9ca3af">조회중</span>';
     const dayCell=dayChg===null?`<span style="color:#9ca3af;font-size:11px">조회중</span>`
       :isDrop?`<span class="pill p-drop"><i class="ti ti-trending-down"></i>${pct(dayChg)}</span>`
@@ -543,7 +570,18 @@ function render(){
       <td>${dayCell}</td>
       <td class="${tPct===null?'neu':tPct>=0?'pos':'neg'}">${tPct===null?'—':pct(tPct)}</td>
       <td class="${pnl===null?'neu':pnl>=0?'pos':'neg'}">${pnl===null?'—':w(pnl)}</td>
-      <td><input class="exit-input" type="number" value="${exitInputVal}" placeholder="${exitPlaceholder}" onchange="setExit('${tabKey}',${idx},this.value)"></td>
+      <td>
+        <div style="display:flex;flex-direction:column;gap:3px;align-items:center;min-width:130px">
+          <div style="display:flex;align-items:center;gap:3px">
+            <button onclick="adjustPct('${tabKey}',${idx},-1)" style="width:22px;height:22px;padding:0;font-size:12px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▼</button>
+            <button onclick="adjustPct('${tabKey}',${idx},-0.1)" style="width:22px;height:22px;padding:0;font-size:11px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▾</button>
+            <input id="exitpct-${tabKey}-${idx}" type="number" value="${s.exitPct!==null?s.exitPct.toFixed(1):''}" placeholder="+0.0%" step="0.1" onchange="setPctDirect('${tabKey}',${idx},this.value)" style="width:58px;height:26px;font-size:12px;text-align:center;border-radius:4px;border:1px solid var(--border2);background:var(--bg);color:var(--text)">
+            <button onclick="adjustPct('${tabKey}',${idx},0.1)" style="width:22px;height:22px;padding:0;font-size:11px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▴</button>
+            <button onclick="adjustPct('${tabKey}',${idx},1)" style="width:22px;height:22px;padding:0;font-size:12px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">▲</button>
+          </div>
+          <div style="font-size:10px;color:var(--text3)">${exitKRW!==null?(isKR?w(exitKRW/s.qty):'$'+(exitKRW/fxRate/s.qty).toFixed(2)):'목표가 미설정'}</div>
+        </div>
+      </td>
       <td>${targetCell}</td>`;
     body.appendChild(tr);
   });
@@ -575,7 +613,7 @@ function addStock(){
   const mkt=document.getElementById('in-mkt').value;
   const acct=document.getElementById('in-acct').value.trim()||'직접입력';
   if(!tk||!avg||!qty){alert('티커, 평균단가, 수량은 필수');return;}
-  getStocks().push({ticker:tk,name:nm,avg,qty,market:mkt,acct,cur:null,prev:null,exit:null});
+  getStocks().push({ticker:tk,name:nm,avg,qty,market:mkt,acct,cur:null,prev:null,exit:null, exitPct:null});
   ['in-tk','in-nm','in-avg','in-qty','in-acct'].forEach(id=>document.getElementById(id).value='');
   render();if(mkt==='US')fetchAll();
 }
@@ -591,7 +629,10 @@ function saveData(){
     localStorage.setItem('pfCash', JSON.stringify(cashCfg));
     localStorage.setItem('pfFG', JSON.stringify({usFG,krFG}));
     // 익절가 저장
-    const exits={personal:personalStocks.map(s=>s.exit), corp:corpStocks.map(s=>s.exit)};
+    const exits={
+      personal:personalStocks.map(s=>({exit:s.exit,exitPct:s.exitPct})),
+      corp:corpStocks.map(s=>({exit:s.exit,exitPct:s.exitPct}))
+    };
     localStorage.setItem('pfExits', JSON.stringify(exits));
   }catch(e){}
 }
@@ -607,8 +648,14 @@ function loadData(){
     const exits=localStorage.getItem('pfExits');
     if(exits){
       const d=JSON.parse(exits);
-      if(d.personal)d.personal.forEach((v,i)=>{if(personalStocks[i])personalStocks[i].exit=v;});
-      if(d.corp)d.corp.forEach((v,i)=>{if(corpStocks[i])corpStocks[i].exit=v;});
+      if(d.personal)d.personal.forEach((v,i)=>{if(personalStocks[i]){
+        if(typeof v==='object'){personalStocks[i].exit=v.exit;personalStocks[i].exitPct=v.exitPct;}
+        else personalStocks[i].exit=v;
+      }});
+      if(d.corp)d.corp.forEach((v,i)=>{if(corpStocks[i]){
+        if(typeof v==='object'){corpStocks[i].exit=v.exit;corpStocks[i].exitPct=v.exitPct;}
+        else corpStocks[i].exit=v;
+      }});
     }
   }catch(e){}
 }
