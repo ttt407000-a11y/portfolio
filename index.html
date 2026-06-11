@@ -383,7 +383,7 @@ function manualFX(){
 }
 function manualFG(market){
   const v=parseInt(document.getElementById(market==='us'?'inp-us-fg':'inp-kr-fg').value);
-  if(!isNaN(v)&&v>=0&&v<=100){if(market==='us')usFG=v;else krFG=v;render();}
+  if(!isNaN(v)&&v>=0&&v<=100){if(market==='us')usFG=v;else krFG=v;render();saveData();}
 }
 function renderFGPanel(fg,numId,lblId,thumbId){
   const col=getFGColor(fg);
@@ -407,6 +407,7 @@ function setExit(tab,idx,val){
   const stocks=tab==='personal'?personalStocks:corpStocks;
   stocks[idx].exit=val?parseFloat(val):null;
   render();
+  saveData();
 }
 
 function render(){
@@ -428,14 +429,14 @@ function render(){
   document.getElementById('cash-section').innerHTML=`
     <div class="slbl"><i class="ti ti-wallet"></i> 현금 설정 — ${isCorp?'법인 (한투)':'개인 (토스+미래에셋+키움)'}</div>
     <div class="cash-inputs">
-      <div class="cash-input-item"><label>원화 예수금 합계 (원)</label><input type="number" value="${Math.round(cfg.krw)}" step="1" oninput="cashCfg['${currentTab}'].krw=parseFloat(this.value)||0;render()"></div>
-      <div class="cash-input-item"><label>달러 예수금 합계 ($)</label><input type="number" value="${cfg.usd.toFixed(2)}" step="0.01" oninput="cashCfg['${currentTab}'].usd=parseFloat(this.value)||0;render()"></div>
+      <div class="cash-input-item"><label>원화 예수금 합계 (원)</label><input type="number" value="${Math.round(cfg.krw)}" step="1" oninput="cashCfg['${currentTab}'].krw=parseFloat(this.value)||0;render();saveData()"></div>
+      <div class="cash-input-item"><label>달러 예수금 합계 ($)</label><input type="number" value="${cfg.usd.toFixed(2)}" step="0.01" oninput="cashCfg['${currentTab}'].usd=parseFloat(this.value)||0;render();saveData()"></div>
       <div class="cash-input-item"><label>현금 합계 (원화 환산)</label><input type="text" value="${w(totalCashKRW)}" readonly style="background:var(--bg2);color:var(--pos);font-weight:700"></div>
     </div>
     <div class="ratio-row">
       <span style="font-size:12px;font-weight:700;color:var(--text2)">비율 조절:</span>
-      <div class="ratio-item"><div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0"></div><label>비상금</label><input type="range" min="0" max="30" value="${cfg.emgPct}" oninput="cashCfg['${currentTab}'].emgPct=parseInt(this.value);render()"><span class="ratio-val" style="color:#ef4444">${cfg.emgPct}%</span></div>
-      <div class="ratio-item"><div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div><label>바닥매수금</label><input type="range" min="0" max="30" value="${cfg.botPct}" oninput="cashCfg['${currentTab}'].botPct=parseInt(this.value);render()"><span class="ratio-val" style="color:#f97316">${cfg.botPct}%</span></div>
+      <div class="ratio-item"><div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0"></div><label>비상금</label><input type="range" min="0" max="30" value="${cfg.emgPct}" oninput="cashCfg['${currentTab}'].emgPct=parseInt(this.value);render();saveData()"><span class="ratio-val" style="color:#ef4444">${cfg.emgPct}%</span></div>
+      <div class="ratio-item"><div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div><label>바닥매수금</label><input type="range" min="0" max="30" value="${cfg.botPct}" oninput="cashCfg['${currentTab}'].botPct=parseInt(this.value);render();saveData()"><span class="ratio-val" style="color:#f97316">${cfg.botPct}%</span></div>
       <span style="font-size:12px;color:var(--text3)">운용현금 자동: ${100-cfg.emgPct-cfg.botPct}%</span>
     </div>
     <div class="cash-breakdown">
@@ -584,6 +585,35 @@ function removeStock(){
   if(confirm(`"${s[s.length-1].ticker}" 삭제할까요?`)){s.pop();render();}
 }
 
+// localStorage 저장/불러오기
+function saveData(){
+  try{
+    localStorage.setItem('pfCash', JSON.stringify(cashCfg));
+    localStorage.setItem('pfFG', JSON.stringify({usFG,krFG}));
+    // 익절가 저장
+    const exits={personal:personalStocks.map(s=>s.exit), corp:corpStocks.map(s=>s.exit)};
+    localStorage.setItem('pfExits', JSON.stringify(exits));
+  }catch(e){}
+}
+function loadData(){
+  try{
+    const cash=localStorage.getItem('pfCash');
+    if(cash){const d=JSON.parse(cash);cashCfg.personal=d.personal;cashCfg.corp=d.corp;}
+    const fg=localStorage.getItem('pfFG');
+    if(fg){const d=JSON.parse(fg);usFG=d.usFG;krFG=d.krFG;
+      if(usFG!==null)document.getElementById('inp-us-fg').value=usFG;
+      if(krFG!==null)document.getElementById('inp-kr-fg').value=krFG;
+    }
+    const exits=localStorage.getItem('pfExits');
+    if(exits){
+      const d=JSON.parse(exits);
+      if(d.personal)d.personal.forEach((v,i)=>{if(personalStocks[i])personalStocks[i].exit=v;});
+      if(d.corp)d.corp.forEach((v,i)=>{if(corpStocks[i])corpStocks[i].exit=v;});
+    }
+  }catch(e){}
+}
+
+loadData();
 render();
 fetchAll();
 startAutoRefresh();
