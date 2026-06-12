@@ -512,35 +512,39 @@ function render(){
     const dayChg=(hasCur&&s.prev)?(s.cur-s.prev)/s.prev*100:null;
     const isDrop=dayChg!==null&&dayChg<=-thr;
 
-    // 익절가 계산 (미국은 달러 기준, 한국은 원화 기준)
-    const exitKRW=s.exit!==null&&s.exit!==undefined?(isKR?s.exit:s.exit*fxRate):null;
+    // 익절가 계산 - 항상 원화 평균단가 기준
+    const avgKRWbase=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
+    const exitKRW=s.exitPct!==null?(avgKRWbase*(1+s.exitPct/100)):null;
     const isExitReached=exitKRW!==null&&curKRW!==null&&curKRW>=exitKRW;
     const remainPct=exitKRW!==null&&curKRW!==null?(exitKRW-curKRW)/curKRW*100:null;
-    const progressPct=exitKRW!==null&&curKRW!==null&&exitKRW>avgKRW?Math.min(100,Math.max(0,(curKRW-avgKRW)/(exitKRW-avgKRW)*100)):0;
-    const exitDisplay=s.exit!==null?(isKR?w(s.exit):'$'+s.exit.toFixed(2)):null;
-    const gainToExit=exitKRW!==null?((exitKRW-avgKRW)/avgKRW*100):null;
+    const progressPct=exitKRW!==null&&curKRW!==null&&exitKRW>avgKRWbase?Math.min(100,Math.max(0,(curKRW-avgKRWbase)/(exitKRW-avgKRWbase)*100)):0;
+    const gainToExit=s.exitPct!==null?s.exitPct:null;
 
     // 목표까지 셀
-    let targetCell='<span style="color:#9ca3af;font-size:11px">익절가 미설정</span>';
-    if(exitKRW!==null&&curKRW!==null){
+    let targetCell='<span style="color:#9ca3af;font-size:11px">목표 미설정</span>';
+    if(s.exitPct!==null){
+      const avgBase=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
+      const tgtPrice=isKR
+        ?w(Math.round(avgBase*(1+s.exitPct/100)))
+        :'$'+(avgBase*(1+s.exitPct/100)/fxRate).toFixed(2);
       if(isExitReached){
         targetCell=`<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:6px 10px;text-align:center">
           <div style="font-size:13px;font-weight:700;color:#15803d">🎯 익절 도달!</div>
-          <div style="font-size:11px;color:#15803d;margin-top:2px">목표가 ${exitDisplay}</div>
+          <div style="font-size:11px;color:#15803d;margin-top:2px">${tgtPrice}</div>
         </div>`;
       } else {
         const barColor=progressPct>=80?'#16a34a':progressPct>=50?'#3b82f6':'#f97316';
-        targetCell=`<div style="min-width:120px">
+        targetCell=`<div style="min-width:110px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:12px;font-weight:700;color:var(--text)">목표 ${exitDisplay}</span>
-            <span style="font-size:12px;font-weight:700;color:#3b82f6">+${gainToExit!==null?gainToExit.toFixed(1):0}%</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text)">목표 ${tgtPrice}</span>
+            <span style="font-size:12px;font-weight:700;color:#3b82f6">+${s.exitPct.toFixed(1)}%</span>
           </div>
           <div style="height:6px;border-radius:3px;background:var(--bg3);overflow:hidden">
             <div style="height:100%;width:${progressPct.toFixed(1)}%;background:${barColor};border-radius:3px;transition:width .4s"></div>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:3px">
             <span style="font-size:11px;color:var(--text2)">${progressPct.toFixed(0)}% 달성</span>
-            <span style="font-size:11px;color:#ef4444;font-weight:600">▲${remainPct!==null?remainPct.toFixed(1):0}% 남음</span>
+            <span style="font-size:11px;color:#ef4444;font-weight:600">▲${remainPct!==null?Math.abs(remainPct).toFixed(1):0}% 남음</span>
           </div>
         </div>`;
       }
@@ -555,8 +559,6 @@ function render(){
       :isDrop?`<span class="pill p-drop"><i class="ti ti-trending-down"></i>${pct(dayChg)}</span>`
       :`<span style="color:${dayChg>=0?'var(--pos)':'var(--neg)'};font-weight:700">${pct(dayChg)}</span>`;
 
-    const exitInputVal=s.exit!==null?s.exit:'';
-    const exitPlaceholder=isKR?'₩목표가':'$목표가';
 
     const tr=document.createElement('tr');
     if(isExitReached)tr.classList.add('rexit');
@@ -587,7 +589,11 @@ function render(){
               <button onclick="adjustPct('${tabKey}',${idx},-0.1)" title="-0.1%" style="width:26px;height:20px;padding:0;font-size:11px;border-radius:3px;line-height:1;color:var(--text2)">-.1</button>
             </div>
           </div>
-          <div style="font-size:12px;font-weight:700;color:var(--text2);background:var(--bg2);padding:2px 8px;border-radius:4px">${s.exitPct!==null?(isKR?w(Math.round(s.avg*(1+s.exitPct/100))):'$'+(s.avgKRW!=null?s.avgKRW*(1+s.exitPct/100)/fxRate:s.avg*(1+s.exitPct/100)).toFixed(2)):'목표 미설정'}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);background:var(--bg2);padding:2px 8px;border-radius:4px">${(()=>{
+            if(s.exitPct===null||s.exitPct===undefined)return '미설정';
+            const base=isKR?s.avg:(s.avgKRW!=null?s.avgKRW:s.avg*fxRate);
+            return isKR?w(Math.round(base*(1+s.exitPct/100))):'$'+(base*(1+s.exitPct/100)/fxRate).toFixed(2);
+          })()}</div>
         </div>
       </td>
       <td>${targetCell}</td>`;
